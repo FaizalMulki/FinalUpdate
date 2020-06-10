@@ -1,0 +1,394 @@
+﻿@{
+    ViewBag.Title = "Compose";
+}
+
+<div ng-controller="ComposeController" id="ComposeController">
+
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="d-inline-block my-2">Alerts</h3>
+            <button class="btn btn-primary pull-right" ng-click="ComposePopup('','Add')">Compose</button>
+        </div>
+        <div class="card-body">
+
+         
+                <div class="row">
+                    <form kendo-validator="WinSearchForm" id="WinSearchForm" ng-submit="validate($event)">
+                       
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Group </label>
+                                <select kendo-combo-box="GridGroupCombobox"
+                                        k-options="GridGroupDataSource"
+                                        class="form-control"
+                                        name="GridGroupId"
+                                        id="GridGroupId"
+                                        ng-model="model.GridGroupId"
+                                        k-on-change="OnGridGroupComboBoxChange(GridGroupCombobox)"></select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Branch </label>
+                                <select kendo-combo-box="GridBranchCombobox"
+                                        k-options="BranchDataSource"
+                                        class="form-control"
+                                        name="GridBranchId"
+                                        id="GridBranchId"
+                                        ng-model="model.GridBranchId"
+                                        k-on-change="OnGridBranchComboBoxChange(GridBranchCombobox)"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Status </label>
+                                <select kendo-combo-box="StatusCombobox"
+                                        k-options="StatusDataSource"
+                                        class="form-control"
+                                        name="StatusId"
+                                        id="StatusId"
+                                        ng-model="model.StatusId"
+                                        k-on-change="OnStatusComboBoxChange(StatusCombobox)"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="input-group">
+                                <input type="search" id="txtSearch" ng-model="model.txtSearch" class="searchImg form-control" placeholder="Search" />
+
+
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" ng-click="GroupSearch()" data-toggle="" title="Search">Search</button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+    
+         
+            <div class="row">
+                <div class="col-sm-12">
+                    <div kendo-grid="mainGrid" options="mainGridOptions" id="mainGrid">
+                        <div k-detail-template>
+                            <div>
+                                <div kendo-grid="childGrid" k-options="subgridOptions(dataItem)" id="childGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+            <div kendo-window="WinGroup" id="WinGroup" k-modal="true" k-actions=["Close"] k-visible="false" k-resizable="false" k-dragable="false" style="display: none;">
+                <form kendo-validator="validator" id="WinGroupForm" ng-submit="validate($event)">
+
+                    <div class="container-fluid">
+      
+                                <div class="row">
+
+                                    <div class="col-sm-6" ng-if="model.IsEdit==false">
+                                        <div class="form-group">
+                                            <label class="d-block">Alert Type <span style="color: red;">*</span></label>
+                                             
+                                            <label class="radio-custom">
+                                                Branch
+                                                <input type="radio" name="alertType" id="bID" value="Branch" ng-model="model.messagetype" ng-click="CheckButton(model.messagetype)" />
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <label class="radio-custom">
+                                                Group
+                                                <input type="radio" name="alertType" id="gID" value="Group" ng-model="model.messagetype"  ng-click="CheckButton(model.messagetype)"/>
+                                                <span class="checkmark"></span>
+                                            </label>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6" ng-if="model.IsEdit==true">
+                                        <div class="form-group">
+                                            <label class="form-label">Alert Type </label>
+                                            {{model.messagetype}}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div ng-show="model.messagetype=='Group'">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Group <span style="color: red;">*</span></label>
+                                                <select kendo-combo-box="GroupCombobox"
+                                                        k-options="GroupDataSource"
+                                                        class="form-control"
+                                                        name="GroupId"
+                                                        id="GroupId"
+                                                        validationmessage="Group is required"
+                                                        ng-model="model.group_id"
+                                                        k-on-change="OnGroupComboBoxChange(GroupCombobox)"
+                                                        ng-readonly="model.IsEdit"
+                                                        ng-required="!model.IsEdit && model.messagetype=='Group'"></select>
+                                                <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="GroupId" role="alert" style="display:none;"><span class="k-icon k-warning"></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div ng-show="model.messagetype=='Branch'">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Branch <span style="color: red;">*</span></label>
+                                                <select kendo-combo-box="BranchCombobox"
+                                                        k-options="BranchDataSource"
+                                                        class="form-control"
+                                                        name="BranchId"
+                                                        id="BranchId"
+                                                        validationmessage="Branch is required"
+                                                        ng-model="model.BranchId"
+                                                        k-on-change="OnBranchComboBoxChange(BranchCombobox)"
+                                                        ng-readonly="model.IsEdit"
+                                                        ng-required="!model.IsEdit && model.messagetype=='Branch'"></select>
+                                                <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="BranchId" role="alert" style="display:none;"><span class="k-icon k-warning"></span></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                 
+
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Subject <span style="color: red;">*</span></label>
+                                            <input id="Subject" name="Subject" type="text" ng-model="model.Subject" placeholder="" class="form-control"   ng-readonly="model.IsEdit" validationmessage="Subject is required" required />
+                                            <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="Subject" role="alert" style="display:none;"></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                              
+
+
+                    
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="dialog_buttons text-right">
+                                                <a href="javascript:void(0);" class="confirm_no btn btn-secondary mr-2" id="btnCancel" ng-click="Cancel()" data-toggle="tooltip" title="Cancel">Cancel</a>
+                                                <a href='javascript:void(0);' class='confirm_yes btn btn-primary' id='btnSubmit' ng-click='Save()' data-toggle='tooltip' title={{model.BtnName}}>{{model.BtnName}}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                        </div>
+                               
+                </form>
+
+            </div>
+
+
+    <div kendo-window="WinDetGroup" id="WinDetGroup" k-modal="true" k-actions=["Close"] k-visible="false" k-resizable="false" k-dragable="false" style="display: none;">
+        <form kendo-validator="DetGroupValidator" id="WinDetGroupForm" ng-submit="validate($event)">
+
+            <div class="container-fluid">             
+                          
+                    <div class="row" ng-show="model.messagetype=='Branch' || Detmodel.IsEdit">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Branch <span style="color: red;">*</span></label>
+                                <select kendo-combo-box="BranchDetCombobox"
+                                        k-options="DetailBranchDataSource"
+                                        class="form-control"
+                                        name="DetBranchId"
+                                        id="DetBranchId"
+                                        validationmessage="Branch is required"
+                                        ng-model="Detmodel.branchid"
+                                        ng-readonly="Detmodel.IsEdit"
+                                        k-on-change="OnBranchDetComboBoxChange(BranchDetCombobox)"
+                                        ng-required="!Detmodel.IsEdit && model.messagetype=='Branch'"></select>
+                                <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="DetBranchId" role="alert" style="display:none;"><span class="k-icon k-warning"></span></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+              
+                    <div class="row" ng-show="model.messagetype=='Branch' || Detmodel.IsEdit">
+
+
+                        <div class="col-md-12" ng-show="Detmodel.IsEdit==false">
+                            <div class="form-group" >
+                                <label class="form-label">Employee  <span style="color: red;">*</span></label>
+                                <select kendo-multi-select="EmployeeMultiCombobox" k-options="EmployeeDataSource" class="form-control" k-ng-model="Detmodel.EmployeeIds"
+                                        name="EmployeeIds" id="EmployeeIds"  validationmessage="Employee is required"   ng-required="!Detmodel.IsEdit && model.messagetype=='Branch'"></select>
+                                <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="EmployeeIds" role="alert" style="display:none;"><span class="k-icon k-warning"></span></span>
+
+                            </div>
+
+
+
+                        </div>
+
+
+                        <div class="col-md-12"  ng-show="Detmodel.IsEdit==true">
+                            <div class="form-group">
+                                <label class="form-label">Employee  <span style="color: red;">*</span></label>
+                                <select kendo-combo-box="EmployeeCombobox"
+                                        k-options="EmployeeDataSource"
+                                        class="form-control"
+                                        name="EmployeeId"
+                                        id="EmployeeId"
+                                        validationmessage="Employee is required"
+                                        ng-model="Detmodel.employeeid"
+                                        ng-readonly="Detmodel.IsEdit && model.messagetype=='Group'"
+                                        ng-required="Detmodel.IsEdit && model.messagetype=='Branch'"
+                                        k-on-change="OnEmployeeComboBoxChange(EmployeeCombobox)"></select>
+                                <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="EmployeeId" role="alert" style="display:none;"><span class="k-icon k-warning"></span></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+              
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="d-block">Message <span style="color: red;">*</span></label>
+                            <textarea id="Description" rows="5" cols="100" name="Description" class="form-control" ng-model="Detmodel.description" placeholder=""  validationmessage="Message is required" required   ng-readonly="Detmodel.IsEdit"></textarea>
+                            <span class="k-invalid-msg" data-for="Description"></span>
+                        </div>
+                    </div>
+                </div>
+
+              
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="dialog_buttons text-right">
+                            <a href="javascript:void(0);" class="confirm_no btn btn-secondary mr-2" id="DetbtnCancel" ng-click="CancelDetail()" data-toggle="tooltip" title="Cancel">Cancel</a>
+                            <a href='javascript:void(0);' class='confirm_yes btn btn-primary' id='DetbtnSubmit' ng-click='SaveDetail()' data-toggle='tooltip' title={{Detmodel.BtnName}}>{{Detmodel.BtnName}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+    <div kendo-window="WinStatus" id="WinStatus" k-modal="true" k-actions=["Close"] k-visible="false" k-resizable="false" k-dragable="false" style="display: none;">
+        <div class="col-md-4" ng-repeat="data in list">
+            <div class="card">
+
+                <div class="card-body">
+                    <div class="pull-left">
+                        <h2 class="font-weight-bold m-0">{{data.Total}}</h2>
+                        <span class="text-muted text-uppercase small">{{data.Name}} </span>
+
+                    </div>
+                    <div class="pull-right">
+                        <img src="~/Content/images/pending.png" class="img-responsive" ng-if="data.Name=='Pending'" width="25">
+                        <img src="~/Content/images/completed.png" class="img-responsive" ng-if="data.Name=='Completed'" width="25">
+                        <img src="~/Content/images/closed.png" class="img-responsive" ng-if="data.Name=='Closed'" width="25">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <div kendo-window="WinDashBoard" id="WinDashBoard" k-modal="true" k-actions=["Close"] k-visible="false" k-resizable="false" k-dragable="false" style="display: none;">
+        <form kendo-validator="ReplyValidator" id="ReplyValidator" ng-submit="validate($event)">
+            <div class="container-fluid">
+
+                <div class="col-sm-12" ng-repeat="item in details">
+                    <div class="text-left mb-3">
+                        <div class="chat-bubble">
+
+                            <span class="chat-message">
+                                <textarea id="Message" name="Message" class="form-control" ng-model="item.Message"></textarea>
+                            </span>
+                        </div>
+                        <span class="m-0">{{item.CreatedBy}}</span>
+                    </div>
+                    <div class="text-right mb-3" ng-if="item.Reply.length>0">
+                        <div class="chat-bubble mine">
+                            <span class="chat-message">
+                                <textarea id="Reply" name="Reply" class="form-control" ng-model="item.Reply" placeholder=""></textarea>
+                            </span>
+                        </div>
+                        <span class="m-0" ng-if="item.Reply.length>0">{{item.EmployeeName}}</span>
+                    </div>
+                </div>
+
+                
+
+                @*<div class="col-sm-12" ng-if="ViewModel.ShowButton">*@
+                <div class="col-sm-12">
+                    <textarea id="SendMessage" name="SendMessage" class="form-control" ng-model="ViewModel.SendMessage" validationmessage="Reply is required" required></textarea>
+                    <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="SendMessage" role="alert" style="display:none;"></span>
+
+                    <div class="dialog_buttons text-right">
+                        <a href="javascript:void(0);" class="confirm_no btn btn-secondary mr-2" id="btnReply" ng-click="Reply()" data-toggle="tooltip" title="">Reply</a>
+                    </div>
+                </div>
+
+
+
+              
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+        </div>
+
+
+        @section  scripts{
+            <script src="~/Content/js/jszip.min.js"></script>
+            <script src="~/ScriptsNg/Controller/Compose.js"></script>
+            <script src="~/Content/js/commonscript.js"></script>
+            <script src="~/Scripts/kendo.all.min.js"></script>
+        }
+
+        <style>
+            textarea[name=Remarks] {
+                resize: none;
+            }
+        </style>
+
+
+
